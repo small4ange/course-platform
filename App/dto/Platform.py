@@ -1,5 +1,5 @@
-from App.Course import Course
-from App.Address import Address
+from App.dto.course.Course import Course
+from App.dto.Address import Address
 from typing import List
 
 # ------------ Класс для списка курсов и методов управления ими

@@ -1,10 +1,12 @@
-from App.Course import Course
+from App.dto.course.Course import Course
 from datetime import date
+from App.interfaces import Teachable, Assessable
+from App.mixins import LoggingMixin, NotificationMixin
 from typing import List, Dict
 
 
 #-------- Курс по программированию
-class ProgrammingCourse(Course):
+class ProgrammingCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMixin):
     def __init__(self, title: str, start_date: date, end_date: date,
                  instructor: str, students: List[str], topics: List[str],
                  languages: List[str]):
@@ -29,3 +31,12 @@ class ProgrammingCourse(Course):
         langs = ", ".join(self.__languages)
         return f"Курс программирования: {self.title}, Преподаватель: {self.instructor}, Языки: {langs}"
 
+        # --- Методы интерфейса Teachable и Assessable ---
+    def teach(self):
+            self.log_action("Начало лекции")  # логирование
+            self.notify_students("Началась лекция по алгоритмам")  # уведомление
+            return "Провожу лекции по алгоритмам"
+
+    def assess_progress(self, progress: Dict[str, float]):
+            self.log_action("Оценка прогресса студентов")
+            return self.calculate_completion_rate(progress)
