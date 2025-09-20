@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import List
+from typing import List, Dict
+from App.metaclasses import CourseMeta
 
 # ------ Абстрактный класс для наследования всеми классами курсов
-class Course(ABC):
-    class Course(ABC):
-        def __init__(self, title: str, start_date: date, end_date: date, instructor: str, students: List[str], topics: List[str]):
+class Course(ABC, metaclass=CourseMeta):
+    def __init__(self, title: str, start_date: date, end_date: date, instructor: str, students: List[str], topics: List[str]):
             self.__title = title # Название курса
             self.__start_date = start_date # Дата начала курса
             self.__end_date = end_date # Дата окончания курса
@@ -15,6 +15,7 @@ class Course(ABC):
 
     #--------- Подсчет процента завершения курса в зависимости от его типа (переопределяется всеми классами с разными типами курсов)
     # аргументы: progress - словарь [студент, процент пройденных тем]
+    @abstractmethod
     def calculate_completion_rate(self, progress) -> float:
         pass
 
