@@ -3,6 +3,7 @@ from datetime import date
 from App.interfaces import Teachable, Assessable
 from App.mixins import LoggingMixin, NotificationMixin
 from typing import List, Dict
+from App.dto.ProgressAssessors import ProgrammingProgressAssessor
 
 
 #-------- Курс по программированию
@@ -18,13 +19,9 @@ class ProgrammingCourse(Course, Teachable, Assessable, LoggingMixin, Notificatio
     def languages(self) -> List[str]:
         return self.__languages
 
-    #--------- переопределяем метод для расчета процента прохождения курса
-    # аргументы: progress - словарь [студент, доля пройденная в курсе от 0 до 1]
-    def calculate_completion_rate(self, progress: Dict[str, float]) -> float:
-        if not progress:
-            return 0
-        avg = sum(progress.values()) / len(progress)
-        return avg * 100
+    #  Метод для оценки прогресса
+    def create_progress_assessor(self):
+        return ProgrammingProgressAssessor(self)  # Передаем self как курс
 
     #-------- переопределяем метод вывода данных курса в строку
     def __str__(self) -> str:
@@ -39,4 +36,4 @@ class ProgrammingCourse(Course, Teachable, Assessable, LoggingMixin, Notificatio
 
     def assess_progress(self, progress: Dict[str, float]):
             self.log_action("Оценка прогресса студентов")
-            return self.calculate_completion_rate(progress)
+            return super().assess_progress(progress)

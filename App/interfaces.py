@@ -15,3 +15,8 @@ class Assessable(ABC):
     def assess_progress(self, progress: Dict[str, float]):
         """Метод для оценки прогресса студентов"""
         pass
+
+    @abstractmethod
+    def create_progress_assessor(self):
+        """Фабричный метод для создания оценщика прогресса"""
+        pass
