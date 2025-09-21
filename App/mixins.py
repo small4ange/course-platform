@@ -1,10 +1,8 @@
-# App/mixins.py
 import logging
 
 # Настройка логирования: сообщения будут выводиться в консоль
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
-# ----------------- LoggingMixin -----------------
 class LoggingMixin:
     def log_action(self, message: str):
         """Логирование действий курса"""
@@ -13,7 +11,6 @@ class LoggingMixin:
         else:
             logging.info(f"[Курс без названия] {message}")
 
-# ----------------- NotificationMixin -----------------
 class NotificationMixin:
     def notify_students(self, message: str):
         """Отправка уведомлений студентам"""
