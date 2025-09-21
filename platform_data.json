@@ -1,0 +1,47 @@
+{
+  "name": "Моя образовательная платформа",
+  "address": {
+    "domain": "example.com",
+    "url": "https://www.example.com"
+  },
+  "courses": [
+    {
+      "type": "ProgrammingCourse",
+      "title": "Python Programming",
+      "start_date": "2024-01-01",
+      "end_date": "2024-12-31",
+      "instructor": "John Doe",
+      "students": [
+        "student1",
+        "student2"
+      ],
+      "topics": [
+        "Basic",
+        "OOP",
+        "Web"
+      ],
+      "languages": [
+        "Python"
+      ]
+    },
+    {
+      "type": "DesignCourse",
+      "title": "Graphic Design",
+      "start_date": "2024-02-01",
+      "end_date": "2024-06-30",
+      "instructor": "Jane Smith",
+      "students": [
+        "student3",
+        "student4"
+      ],
+      "topics": [
+        "Color Theory",
+        "Typography"
+      ],
+      "tools": [
+        "Photoshop",
+        "Illustrator"
+      ]
+    }
+  ]
+}

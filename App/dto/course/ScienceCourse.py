@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Dict
+from typing import List, Dict, Any
 from App.dto.course.Course import Course
 from App.interfaces import Teachable, Assessable
 from App.mixins import LoggingMixin, NotificationMixin
@@ -11,7 +11,7 @@ class ScienceCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMix
                  instructor: str, students: List[str], topics: List[str],
                  field: List[str]):
         super().__init__(title, start_date, end_date, instructor, students, topics)
-        self.__field = field  # добавили поле для области науки
+        self.__field = field
 
     # -------- геттер для field
     @property
@@ -36,3 +36,28 @@ class ScienceCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMix
     def assess_progress(self, progress: Dict[str, float]) -> float:
         self.log_action("Оценка прогресса студентов")
         return super().assess_progress(progress)
+    
+    
+    def to_dict(self) -> Dict[str, Any]:
+        data = super().to_dict()
+        data.update({
+            'field': self.__field
+        })
+        return data
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ScienceCourse':
+        start_date = date.fromisoformat(data['start_date'])
+        end_date = date.fromisoformat(data['end_date'])
+        
+        course = cls(
+            title=data['title'],
+            start_date=start_date,
+            end_date=end_date,
+            instructor=data['instructor'],
+            students=data['students'],
+            topics=data['topics'],
+            field=data.get('field', [])
+        )
+        
+        return course

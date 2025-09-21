@@ -5,7 +5,6 @@ from datetime import date
 from typing import List
 
 class CourseFactory:
-    # course_type: тип курса("programming", "design", "science")
     @staticmethod
     def create_course(course_type: str, title: str, start_date: date, end_date: date, instructor: str, students: List[str], topics: List[str], **kwargs):
         if course_type == "programming":
@@ -20,4 +19,23 @@ class CourseFactory:
         else:
             return ValueError(f"Неизвестный тип курса: {course_type}")
 
-
+    @staticmethod
+    def from_dict(data: dict):
+        course_type = data.get('type', '').lower()
+        
+        if 'programming' in course_type:
+            return ProgrammingCourse.from_dict(data)
+        elif 'design' in course_type:
+            return DesignCourse.from_dict(data)
+        elif 'science' in course_type:
+            return ScienceCourse.from_dict(data)
+        else:
+            if 'languages' in data:
+                return ProgrammingCourse.from_dict(data)
+            elif 'tools' in data:
+                return DesignCourse.from_dict(data)
+            elif 'field' in data:
+                return ScienceCourse.from_dict(data)
+            else:
+                from App.dto.course.Course import Course
+                return Course.from_dict(data)
