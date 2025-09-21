@@ -3,7 +3,7 @@ from typing import List, Dict
 from App.dto.course.Course import Course
 from App.interfaces import Teachable, Assessable
 from App.mixins import LoggingMixin, NotificationMixin
-
+from App.dto.ProgressAssessors import ScienceProgressAssessor
 
 # -------- Курс по науке
 class ScienceCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMixin):
@@ -18,15 +18,9 @@ class ScienceCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMix
     def field(self) -> List[str]:
         return self.__field
 
-    # --------- переопределяем метод для расчета процента прохождения курса
-    # аргументы: progress - словарь [студент, число выполненных заданий]
-    def calculate_completion_rate(self, progress: Dict[str, float]) -> float:
-        """Процент выполнения курса на основе выполненных заданий"""
-        if not progress:
-            return 0.0
-        max_tasks = len(self.topics)
-        avg = sum(min(v, max_tasks) / max_tasks for v in progress.values()) / len(progress)
-        return avg * 100
+    #  Метод для оценки прогресса
+    def create_progress_assessor(self):
+        return ScienceProgressAssessor(self)  # Передаем self как курс
 
     # -------- переопределяем метод вывода данных курса в строку
     def __str__(self) -> str:
@@ -41,4 +35,4 @@ class ScienceCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMix
 
     def assess_progress(self, progress: Dict[str, float]) -> float:
         self.log_action("Оценка прогресса студентов")
-        return self.calculate_completion_rate(progress)
+        return super().assess_progress(progress)

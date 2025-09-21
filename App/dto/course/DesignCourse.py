@@ -3,7 +3,7 @@ from App.mixins import LoggingMixin, NotificationMixin
 from App.interfaces import Teachable, Assessable
 from typing import List, Dict
 from App.dto.course.Course import Course
-
+from App.dto.ProgressAssessors import DesignProgressAssessor
 
 # -------- Курс по дизайну
 class DesignCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMixin):
@@ -18,13 +18,9 @@ class DesignCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMixi
     def tools(self) -> List[str]:
         return self.__tools
 
-    # --------- переопределяем метод для расчета процента прохождения курса
-    # аргументы: progress - словарь [студент, оценка за сданную итоговую курсовую от 0 до 100]
-    def calculate_completion_rate(self, progress: Dict[str, float]) -> float:
-        if not progress:
-            return 0
-        avg = sum(progress.values()) / len(progress)
-        return avg
+    #  Метод для оценки прогресса
+    def create_progress_assessor(self):
+        return DesignProgressAssessor(self)  # Передаем self как курс
 
     # -------- переопределяем метод вывода данных курса в строку
     def __str__(self) -> str:
@@ -39,4 +35,4 @@ class DesignCourse(Course, Teachable, Assessable, LoggingMixin, NotificationMixi
 
     def assess_progress(self, progress: Dict[str, float]):
             self.log_action("Оценка прогресса студентов")
-            return self.calculate_completion_rate(progress)
+            return super().assess_progress(progress)

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import date
 from typing import List, Dict
 from App.metaclasses import CourseMeta
+from App.dto.ProgressAssessors import ProgressAssessor
 
 # ------ Абстрактный класс для наследования всеми классами курсов
 class Course(ABC, metaclass=CourseMeta):
@@ -12,12 +13,19 @@ class Course(ABC, metaclass=CourseMeta):
             self.__instructor = instructor # Преподаватель курса
             self.__students = students # Список студентов
             self.__topics = topics # Список тем
+            self.__progress_assessor = None  # Добавляем ссылку на оценщика
 
-    #--------- Подсчет процента завершения курса в зависимости от его типа (переопределяется всеми классами с разными типами курсов)
-    # аргументы: progress - словарь [студент, процент пройденных тем]
+
     @abstractmethod
-    def calculate_completion_rate(self, progress) -> float:
+    def create_progress_assessor(self) -> ProgressAssessor:
+        """Фабричный метод для создания оценщика прогресса"""
         pass
+
+    def assess_progress(self, progress: Dict[str, float]) -> float:
+        """Используем шаблонный метод для оценки прогресса"""
+        if self.__progress_assessor is None:
+            self.__progress_assessor = self.create_progress_assessor()
+        return self.__progress_assessor.assess_progress(progress)
 
     #---------Геттеры сеттеры
     @property
