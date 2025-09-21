@@ -1,16 +1,21 @@
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import List, Dict
+from typing import List, Dict, Any
 from App.metaclasses import CourseMeta
+from App.exceptions import InvalidDateError
 
 # ------ Абстрактный класс для наследования всеми классами курсов
 class Course(ABC, metaclass=CourseMeta):
     def __init__(self, title: str, start_date: date, end_date: date, instructor: str, students: List[str], topics: List[str]):
-            self.__title = title # Название курса
-            self.__start_date = start_date # Дата начала курса
-            self.__end_date = end_date # Дата окончания курса
-            self.__instructor = instructor # Преподаватель курса
-            self.__students = students # Список студентов
+            # Проверяем валидность дат
+            if end_date < start_date:
+                raise InvalidDateError("Дата окончания курса не может быть раньше даты начала")
+            
+            self.__title = title 
+            self.__start_date = start_date 
+            self.__end_date = end_date 
+            self.__instructor = instructor 
+            self.__students = students 
             self.__topics = topics # Список тем
 
     #--------- Подсчет процента завершения курса в зависимости от его типа (переопределяется всеми классами с разными типами курсов)
@@ -32,6 +37,9 @@ class Course(ABC, metaclass=CourseMeta):
         return self.__start_date
     @start_date.setter
     def start_date(self, value: date):
+        # Проверяем валидность даты при установке
+        if value > self.__end_date:
+            raise InvalidDateError("Дата начала не может быть позже даты окончания")
         self.__start_date = value
 
     @property
@@ -39,6 +47,9 @@ class Course(ABC, metaclass=CourseMeta):
         return self.__end_date
     @end_date.setter
     def end_date(self, value: date):
+        # Проверяем валидность даты при установке
+        if value < self.__start_date:
+            raise InvalidDateError("Дата окончания не может быть раньше даты начала")
         self.__end_date = value
 
     @property
@@ -75,4 +86,20 @@ class Course(ABC, metaclass=CourseMeta):
     def __gt__(self, other: "Course") -> bool:
         return len(self.__students) > len(other.__students)
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Преобразует объект курса в словарь"""
+        return {
+            'type': self.__class__.__name__,
+            'title': self.__title,
+            'start_date': self.__start_date,
+            'end_date': self.__end_date,
+            'instructor': self.__instructor,
+            'students': self.__students,
+            'topics': self.__topics
+        }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'Course':
+        """Создает объект курса из словаря"""
+        # Этот метод будет переопределен в дочерних классах
+        raise NotImplementedError("Метод from_dict должен быть реализован в дочерних классах")
