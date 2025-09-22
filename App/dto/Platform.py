@@ -6,7 +6,10 @@ from App.exceptions import CourseNotFoundError
 from App.dto.course.ProgrammingCourse import ProgrammingCourse
 from App.dto.course.DesignCourse import DesignCourse
 from App.dto.course.ScienceCourse import ScienceCourse
-        
+import logging
+
+
+platform_logger = logging.getLogger('platform')
 
 # ------------ Класс для списка курсов и методов управления ими
 class Platform:
@@ -14,6 +17,7 @@ class Platform:
         self.__name = name
         self.__address = address
         self.__courses: List["Course"] = []
+        platform_logger.info(f"Создана платформа: {name}")
 
     @property
     def name(self) -> str:
@@ -26,13 +30,16 @@ class Platform:
     #---------- Метод добавления курса на платформу
     @check_permissions('edit_course')
     def add_course(self, course: "Course") -> None:
+        platform_logger.info(f"Добавлен курс '{course.title}' на платформу '{self.__name}'")
         self.__courses.append(course)
 
     # ---------- Метод удаления курса с платформы
     @check_permissions('edit_course')
     def remove_course(self, course: "Course") -> None:
         if course not in self.__courses:
+            platform_logger.warning(f"Попытка удаления несуществующего курса: {course.title}")
             raise CourseNotFoundError("Курс не найден на платформе")
+        platform_logger.info(f"Удален курс '{course.title}' с платформы '{self.__name}'")
         self.__courses.remove(course)
 
     # --------- Метод получения списка всех курсов
@@ -41,6 +48,7 @@ class Platform:
 
     # ---------- Метод получения топ-N курсов по кол-ву студентов
     def get_top_courses(self, n: int) -> List["Course"]:
+        platform_logger.info(f"Получен топ-{n} курсов по количеству студентов")
         return sorted(self.__courses, key=lambda c: len(c.students), reverse=True)[:n]
 
     # ---------- Вывод данных платформы в строку
@@ -91,5 +99,6 @@ class Platform:
     
     def get_course_by_index(self, index: int) -> "Course":
         if index < 0 or index >= len(self.__courses):
+            platform_logger.warning(f"Попытка получения курса по несуществующему индексу: {index}")
             raise CourseNotFoundError(f"Курс с индексом {index} не найден")
         return self.__courses[index]
